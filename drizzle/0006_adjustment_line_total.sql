@@ -1,0 +1,1 @@
+ALTER TABLE "stock_adjustment_lines" ADD COLUMN "total_cost" numeric(18, 4);

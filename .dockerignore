@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.env
+.env.*
+!.env.example
+uploads
+docs
+playwright-report
+test-results
+.superpowers
+.next-e2e

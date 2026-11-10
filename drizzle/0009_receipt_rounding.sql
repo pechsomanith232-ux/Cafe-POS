@@ -1,0 +1,1 @@
+ALTER TABLE "goods_receipts" ADD COLUMN "rounding_base" numeric(18, 4) DEFAULT '0' NOT NULL;

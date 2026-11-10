@@ -1,0 +1,45 @@
+# Local development database (plan §8).
+# Start with `pnpm db:up` (waits until PostgreSQL is ready), stop with `pnpm db:down`.
+services:
+  postgres:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: cafe_pos
+      TZ: Asia/Phnom_Penh
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Creates the second database (cafe_pos_test) used by `pnpm test:int`.
+      # Runs only the first time the volume is created.
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      # -h 127.0.0.1 checks over TCP, so the temporary server PostgreSQL runs
+      # during first-time setup (socket only) doesn't count as "ready".
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U postgres -d cafe_pos"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+  # Optional S3-compatible storage for product images (Phase 4).
+  # Start it with: docker compose --profile storage up -d
+  minio:
+    image: minio/minio:latest
+    profiles: ["storage"]
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio12345
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - miniodata:/data
+
+volumes:
+  pgdata:
+  miniodata:
