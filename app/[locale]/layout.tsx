@@ -45,9 +45,9 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
       <body
         className={`min-h-full flex flex-col ${locale === "km" ? "[font-family:var(--font-khmer),var(--font-geist-sans)]" : "font-sans"}`}
       >
-        <Providers>
-          <NextIntlClientProvider>{children}</NextIntlClientProvider>
-        </Providers>
+        <NextIntlClientProvider>
+          <Providers>{children}</Providers>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
