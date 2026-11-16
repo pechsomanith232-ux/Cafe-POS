@@ -22,7 +22,7 @@ import {
 import type { AdjustmentInput, ItemInput } from "@/lib/validators/inventory";
 
 // Thin actions (plan §2.2): context → one service → refresh.
-const refresh = () => revalidatePath("/[locale]/inventory", "layout");
+const refresh = () => revalidatePath("/[locale]/(app)/inventory", "layout");
 
 export async function createCategoryAction(name: string) {
   return toActionResult(async () => {
