@@ -1,19 +1,28 @@
 import { getSessionCookie } from "better-auth/cookies";
+import createMiddleware from "next-intl/middleware";
 import { NextResponse, type NextRequest } from "next/server";
+import { routing } from "@/i18n/routing";
 
-// Optimistic check only: no session cookie → /login. Every page and action
-// still verifies the session and permissions on the server (plan §5.9).
+const intl = createMiddleware(routing);
+
+// Locale routing first (redirects unprefixed paths), then an optimistic auth
+// check only: no session cookie → /{locale}/login. Every page and action still
+// verifies the session and permissions on the server (plan §5.9).
 export function proxy(request: NextRequest) {
-  if (!getSessionCookie(request)) {
-    const url = new URL("/login", request.url);
-    const next = request.nextUrl.pathname + request.nextUrl.search;
-    if (next !== "/") url.searchParams.set("next", next);
+  const response = intl(request);
+  if (response.headers.get("location")) return response;
+
+  const { pathname, search } = request.nextUrl;
+  const [, locale, ...rest] = pathname.split("/");
+  if (!getSessionCookie(request) && rest.join("/") !== "login") {
+    const url = new URL(`/${locale}/login`, request.url);
+    url.searchParams.set("next", pathname + search);
     return NextResponse.redirect(url);
   }
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {
-  // Everything except the login page, auth/health APIs, the PWA manifest + icons and Next internals.
-  matcher: ["/((?!login|api/auth|api/health|_next/static|_next/image|favicon.ico|manifest.webmanifest|icons/).*)"],
+  // Everything except API routes, Next internals and files with an extension (manifest, icons, favicon).
+  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
 };

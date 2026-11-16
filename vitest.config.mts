@@ -13,6 +13,8 @@ export default defineConfig({
           name: "unit",
           environment: "node",
           include: ["tests/unit/**/*.test.ts", "lib/**/*.test.ts"],
+          // next-intl imports "next/server" without an extension, which Node ESM rejects.
+          server: { deps: { inline: [/next-intl/] } },
         },
       },
       {
