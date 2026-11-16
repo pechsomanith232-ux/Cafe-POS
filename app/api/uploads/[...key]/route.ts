@@ -1,8 +1,11 @@
+import { getSessionUserId } from "@/lib/context";
 import { getStorage, isSafeKey } from "@/lib/storage";
 
 // Serves product images stored by the local storage driver (development and
 // single-server installs). With STORAGE_DRIVER=s3 images come from the bucket.
 export async function GET(_req: Request, { params }: RouteContext<"/api/uploads/[...key]">) {
+  // proxy.ts skips /api, so the signed-in check lives here (404, not 401, like other misses).
+  if (!(await getSessionUserId())) return new Response("Not found", { status: 404 });
   const key = (await params).key.join("/");
   const storage = getStorage();
   if (storage.kind !== "local" || !isSafeKey(key)) return new Response("Not found", { status: 404 });

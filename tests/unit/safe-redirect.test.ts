@@ -30,3 +30,21 @@ describe("stripLocale (the next-intl router adds the locale back)", () => {
     expect(stripLocale(input)).toBe(out);
   });
 });
+
+describe("login redirect, composed (stripLocale(safeRedirectPath(next)))", () => {
+  it.each([
+    ["//evil.com", "/dashboard"],
+    ["/\\evil.com", "/dashboard"],
+    ["https://evil.com/x", "/dashboard"],
+    ["/km//evil.com", "/evil.com"],
+    ["/kmx/a", "/kmx/a"],
+    ["/km", "/"],
+    ["/km/inventory/items?type=sale", "/inventory/items?type=sale"],
+    ["/en/pos", "/pos"],
+    [null, "/dashboard"],
+  ])("%j gives %j, one leading slash, never //", (next, out) => {
+    const result = stripLocale(safeRedirectPath(next, origin));
+    expect(result).toBe(out);
+    expect(result.startsWith("/") && !result.startsWith("//")).toBe(true);
+  });
+});
