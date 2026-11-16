@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { cancelCountAction, postCountAction, saveCountLinesAction } from "@/app/[locale]/(app)/inventory/actions";

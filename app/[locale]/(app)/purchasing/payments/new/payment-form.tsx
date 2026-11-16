@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { openReceiptsAction, recordSupplierPaymentAction } from "@/app/[locale]/(app)/purchasing/actions";

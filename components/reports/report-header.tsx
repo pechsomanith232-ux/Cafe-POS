@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ChevronLeft } from "lucide-react";
 
 /** Report title with the scope (branch, period) that also prints at the top of the page. */

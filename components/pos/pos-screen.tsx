@@ -1,8 +1,8 @@
 "use client";
 
 import { Ban, Banknote, ChefHat, Coffee, History, LayoutDashboard, LogOut, Minus, Pause, Percent, Plus, ReceiptText, Search, Send, ShoppingBasket, Trash2, Wallet } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Link } from "@/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { openOrderAction, openOrdersAction, payAction, resumeOrderAction, saveOrderAction } from "@/app/[locale]/pos/actions";

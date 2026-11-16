@@ -1,5 +1,5 @@
 import { Plus } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ReportTable } from "@/components/reports/report-table";
 import { AccessDenied } from "@/components/shared/access-denied";
 import { PageHeader } from "@/components/shared/page-header";

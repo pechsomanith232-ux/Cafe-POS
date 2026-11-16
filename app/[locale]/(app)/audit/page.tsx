@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { AccessDenied } from "@/components/shared/access-denied";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";

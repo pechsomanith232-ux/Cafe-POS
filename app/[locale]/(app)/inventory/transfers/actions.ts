@@ -6,7 +6,7 @@ import { getContext } from "@/lib/context";
 import { cancelTransfer, createTransfer, receiveTransfer, sendTransfer } from "@/lib/services/transfers";
 import type { ReceiveTransferInput, TransferInput } from "@/lib/validators/inventory";
 
-const refresh = () => revalidatePath("/inventory", "layout");
+const refresh = () => revalidatePath("/[locale]/inventory", "layout");
 
 export async function createTransferAction(input: TransferInput, send: boolean) {
   return toActionResult(async () => {

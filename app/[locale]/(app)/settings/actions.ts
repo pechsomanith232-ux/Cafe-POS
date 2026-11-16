@@ -47,14 +47,14 @@ export async function setBranchActiveAction(id: string, active: boolean) {
 export async function createUserAction(input: CreateUserInput) {
   return toActionResult(async () => {
     await createUser(await getContext(), input);
-    revalidatePath("/settings/users");
+    revalidatePath("/[locale]/settings/users", "page");
   });
 }
 
 export async function updateUserNameAction(userId: string, name: string) {
   return toActionResult(async () => {
     await updateUserName(await getContext(), userId, name);
-    revalidatePath("/settings/users");
+    revalidatePath("/[locale]/settings/users", "page");
   });
 }
 
@@ -65,35 +65,35 @@ export async function resetPasswordAction(userId: string, password: string) {
 export async function setUserPinAction(userId: string, pin: string) {
   return toActionResult(async () => {
     await setUserPin(await getContext(), userId, pin);
-    revalidatePath("/settings/users");
+    revalidatePath("/[locale]/settings/users", "page");
   });
 }
 
 export async function setUserActiveAction(userId: string, active: boolean) {
   return toActionResult(async () => {
     await setUserActive(await getContext(), userId, active);
-    revalidatePath("/settings/users");
+    revalidatePath("/[locale]/settings/users", "page");
   });
 }
 
 export async function assignRoleAction(input: { userId: string; branchId: string; roleId: string }) {
   return toActionResult(async () => {
     await assignBranchRole(await getContext(), input);
-    revalidatePath("/settings/users");
+    revalidatePath("/[locale]/settings/users", "page");
   });
 }
 
 export async function removeRoleAction(input: { userId: string; branchId: string }) {
   return toActionResult(async () => {
     await removeBranchRole(await getContext(), input);
-    revalidatePath("/settings/users");
+    revalidatePath("/[locale]/settings/users", "page");
   });
 }
 
 export async function createRoleAction(input: RoleInput) {
   return toActionResult(async () => {
     await createRole(await getContext(), input);
-    revalidatePath("/settings/roles");
+    revalidatePath("/[locale]/settings/roles", "page");
   });
 }
 
@@ -107,7 +107,7 @@ export async function updateRoleAction(roleId: string, input: RoleInput) {
 export async function deleteRoleAction(roleId: string) {
   return toActionResult(async () => {
     await deleteRole(await getContext(), roleId);
-    revalidatePath("/settings/roles");
+    revalidatePath("/[locale]/settings/roles", "page");
   });
 }
 

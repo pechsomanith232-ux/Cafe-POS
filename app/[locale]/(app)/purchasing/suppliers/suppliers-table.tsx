@@ -2,7 +2,7 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 import { Plus } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useState } from "react";
 import { SupplierDialog } from "@/components/purchasing/supplier-dialog";
 import { DataTable } from "@/components/shared/data-table";

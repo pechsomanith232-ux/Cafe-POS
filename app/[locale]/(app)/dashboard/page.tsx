@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { SalesTrend } from "@/components/reports/sales-trend";
 import { StatTiles } from "@/components/reports/stat-tiles";
 import { PageHeader } from "@/components/shared/page-header";

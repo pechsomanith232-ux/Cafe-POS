@@ -9,7 +9,7 @@ import type { CustomerInput, CustomerPaymentInput } from "@/lib/validators/custo
 export async function saveCustomerAction(id: string | null, input: CustomerInput) {
   return toActionResult(async () => {
     const c = await saveCustomer(await getContext(), id, input);
-    revalidatePath("/customers");
+    revalidatePath("/[locale]/customers", "page");
     return { id: c.id };
   });
 }
@@ -17,6 +17,6 @@ export async function saveCustomerAction(id: string | null, input: CustomerInput
 export async function customerPaymentAction(input: CustomerPaymentInput) {
   return toActionResult(async () => {
     await recordCustomerPayment(await getContext(), input);
-    revalidatePath("/customers", "layout");
+    revalidatePath("/[locale]/customers", "layout");
   });
 }

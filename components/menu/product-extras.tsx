@@ -1,7 +1,7 @@
 "use client";
 
 import { ImageIcon, Trash2, Upload } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { comboCostAction, removeProductImageAction, setBranchPriceAction, uploadProductImageAction } from "@/app/[locale]/(app)/menu/actions";

@@ -1,7 +1,7 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { DataTable } from "@/components/shared/data-table";
 import { Input } from "@/components/ui/input";
 import { usd } from "@/lib/format";

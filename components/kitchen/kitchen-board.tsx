@@ -2,7 +2,7 @@
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Volume2, VolumeX } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { setKitchenStatusAction } from "@/app/[locale]/kitchen/actions";

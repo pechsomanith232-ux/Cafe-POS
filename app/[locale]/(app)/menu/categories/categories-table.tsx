@@ -2,7 +2,7 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 import { Pencil, Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { createMenuCategoryAction, updateMenuCategoryAction } from "@/app/[locale]/(app)/menu/actions";

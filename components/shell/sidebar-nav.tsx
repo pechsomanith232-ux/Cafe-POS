@@ -27,8 +27,8 @@ import {
   Users,
   type LucideIcon,
 } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link } from "@/i18n/navigation";
+import { usePathname } from "@/i18n/navigation";
 import { useState } from "react";
 import { SignOutButton } from "@/components/shared/sign-out-button";
 import { Button } from "@/components/ui/button";

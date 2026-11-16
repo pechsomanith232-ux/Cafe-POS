@@ -1,7 +1,7 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { DataTable } from "@/components/shared/data-table";
 import { fmtDateTime, num, usd } from "@/lib/format";
 

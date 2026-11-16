@@ -16,7 +16,7 @@ import type { CashMovementInput, CloseShiftInput, OpenShiftInput, PayOrderInput,
 export async function openShiftAction(input: OpenShiftInput) {
   return toActionResult(async () => {
     await openShift(await getContext(), input);
-    revalidatePath("/pos");
+    revalidatePath("/[locale]/pos", "page");
   });
 }
 
@@ -36,7 +36,7 @@ export async function shiftReportAction(shiftId: string) {
 export async function payAction(cart: SaveOrderInput, pay: PayOrderInput) {
   return toActionResult(async () => {
     const r = await saveAndPayOrder(await getContext(), cart, pay);
-    revalidatePath("/pos");
+    revalidatePath("/[locale]/pos", "page");
     return r;
   });
 }
@@ -44,7 +44,7 @@ export async function payAction(cart: SaveOrderInput, pay: PayOrderInput) {
 export async function voidOrderAction(orderId: string, input: { reason: string; approval: { approverId: string; pin: string } }) {
   return toActionResult(async () => {
     await voidOrder(await getContext(), orderId, input);
-    revalidatePath("/pos");
+    revalidatePath("/[locale]/pos", "page");
   });
 }
 
@@ -62,7 +62,7 @@ export async function refundableAction(orderId: string) {
 export async function refundOrderAction(orderId: string, input: RefundOrderInput) {
   return toActionResult(async () => {
     const r = await refundOrder(await getContext(), orderId, input);
-    revalidatePath("/pos");
+    revalidatePath("/[locale]/pos", "page");
     return r;
   });
 }

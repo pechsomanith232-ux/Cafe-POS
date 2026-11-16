@@ -1,7 +1,7 @@
 "use client";
 
 import { Minus, Plus, Printer } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { cashMovementAction, closeShiftAction, recentOrdersAction, refundableAction, refundOrderAction, shiftReportAction, voidOrderAction } from "@/app/[locale]/pos/actions";

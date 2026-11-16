@@ -1,7 +1,7 @@
 "use client";
 
 import { Plus, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { createTransferAction } from "@/app/[locale]/(app)/inventory/transfers/actions";

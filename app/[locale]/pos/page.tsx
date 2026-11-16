@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { branches } from "@/db/schema";
 import { OpenShiftScreen } from "@/components/pos/shift-screens";
 import { PosScreen } from "@/components/pos/pos-screen";
