@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { usd } from "@/lib/format";
@@ -29,6 +30,7 @@ export function DailySalesChart({ data, title }: { data: Point[]; title: string 
   const [hover, setHover] = useState<number | null>(null);
   const [table, setTable] = useState(false);
   const titleId = useId();
+  const t = useTranslations("Dashboard.chart");
   const W = 640, H = 220, L = 52, R = 8, T = 12, B = 26;
   const vals = data.map((d) => Number(d.netSales));
   const tk = ticks(Math.min(...vals, 0), Math.max(...vals, 0));
@@ -55,7 +57,7 @@ export function DailySalesChart({ data, title }: { data: Point[]; title: string 
     <figure className="grid gap-2">
       <figcaption id={titleId} className="text-sm font-medium">{title}</figcaption>
       <p id={`${titleId}-sum`} className="sr-only">
-        Total {usd(vals.reduce((a, v) => a + v, 0))}; highest {usd(Math.max(...vals, 0))}; lowest {usd(Math.min(...vals, 0))}. Use “Show as table” for every day.
+        {t("summary", { total: usd(vals.reduce((a, v) => a + v, 0)), high: usd(Math.max(...vals, 0)), low: usd(Math.min(...vals, 0)) })}
       </p>
       <div className="relative">
         <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="group" aria-labelledby={titleId} aria-describedby={`${titleId}-sum`} onPointerLeave={() => setHover(null)}>
@@ -70,7 +72,7 @@ export function DailySalesChart({ data, title }: { data: Point[]; title: string 
               <path d={bar(i, vals[i])} fill="var(--viz-series-1)" opacity={hover === null || hover === i ? 1 : 0.55} />
               {/* Hit target: the whole band, taller than the bar. */}
               <rect role="img" x={L + band * i} y={T} width={band} height={H - T - B} fill="transparent" tabIndex={0}
-                aria-label={`${d.date}: ${usd(d.netSales)}, ${d.orders} orders`}
+                aria-label={t("bar", { date: d.date, amount: usd(d.netSales), orders: String(d.orders) })}
                 onPointerEnter={() => setHover(i)} onFocus={() => setHover(i)} onBlur={() => setHover(null)} className="outline-none" />
               {i % every === 0 && <text x={L + band * i + band / 2} y={H - 8} textAnchor="middle" fontSize={11} fill="var(--viz-muted)">{dm(d.date)}</text>}
             </g>
@@ -80,16 +82,16 @@ export function DailySalesChart({ data, title }: { data: Point[]; title: string 
           <div className="pointer-events-none absolute top-0 rounded-md border bg-popover px-2 py-1 text-xs shadow-sm"
             style={{ left: `${((L + band * hover + band / 2) / W) * 100}%`, transform: "translateX(-50%)" }}>
             <div className="font-semibold tabular-nums">{usd(h.netSales)}</div>
-            <div className="text-muted-foreground">{h.date} · {h.orders} orders</div>
+            <div className="text-muted-foreground">{t("tooltip", { date: h.date, orders: String(h.orders) })}</div>
           </div>
         )}
       </div>
       <div className="print:hidden">
-        <Button variant="ghost" size="sm" onClick={() => setTable((t) => !t)}>{table ? "Hide table" : "Show as table"}</Button>
+        <Button variant="ghost" size="sm" onClick={() => setTable((t) => !t)}>{table ? t("hideTable") : t("showTable")}</Button>
       </div>
       {table && (
         <table className="w-full text-sm">
-          <thead><tr className="text-left text-muted-foreground"><th className="py-1">Date</th><th className="text-right">Orders</th><th className="text-right">Net sales</th></tr></thead>
+          <thead><tr className="text-left text-muted-foreground"><th className="py-1">{t("date")}</th><th className="text-right">{t("orders")}</th><th className="text-right">{t("netSales")}</th></tr></thead>
           <tbody>{data.map((d) => <tr key={d.date} className="border-t"><td className="py-1">{d.date}</td><td className="text-right tabular-nums">{d.orders}</td><td className="text-right tabular-nums">{usd(d.netSales)}</td></tr>)}</tbody>
         </table>
       )}

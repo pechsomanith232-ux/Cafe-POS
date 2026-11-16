@@ -1,11 +1,125 @@
 {
   "Metadata": {
     "title": "Café POS",
-    "description": "Point of sale and inventory for cafés"
+    "description": "Point of sale and inventory for cafés",
+    "login": "Sign in · Café POS",
+    "dashboard": "Dashboard · Café POS"
   },
   "LanguageSwitcher": {
     "label": "Language",
     "en": "English",
     "km": "ខ្មែរ"
+  },
+  "Nav": {
+    "groups": {
+      "overview": "Overview",
+      "sales": "Sales",
+      "inventory": "Inventory",
+      "menu": "Menu",
+      "purchasing": "Purchasing",
+      "settings": "Settings",
+      "you": "You"
+    },
+    "items": {
+      "dashboard": "Dashboard",
+      "reports": "Reports",
+      "pos": "POS",
+      "kitchen": "Kitchen screen",
+      "customers": "Customers",
+      "items": "Items & stock",
+      "movements": "Movements",
+      "adjustments": "Adjustments",
+      "transfers": "Transfers",
+      "counts": "Stock counts",
+      "products": "Products",
+      "modifiers": "Modifier groups",
+      "menuCategories": "Menu categories",
+      "quickPurchase": "Quick purchase",
+      "receipts": "Goods receipts",
+      "suppliers": "Suppliers",
+      "payments": "Supplier payments",
+      "aging": "AP aging",
+      "branches": "Branches",
+      "posSettings": "POS settings",
+      "users": "Users",
+      "roles": "Roles",
+      "audit": "Audit log",
+      "account": "My account"
+    },
+    "signOut": "Sign out",
+    "branch": "Branch",
+    "openMenu": "Open menu",
+    "menu": "Menu"
+  },
+  "Pos": {
+    "header": {
+      "menu": "Menu",
+      "menuLabel": "POS menu",
+      "orders": "Orders",
+      "recent": "Recent orders & refunds",
+      "cashMove": "Cash in / out",
+      "quickPurchase": "Quick purchase",
+      "kitchen": "Kitchen screen",
+      "backOffice": "Back office",
+      "closeShift": "Close shift"
+    }
+  },
+  "Login": {
+    "description": "Sign in with the account your manager gave you.",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "errors": {
+      "deactivated": "This account is deactivated. Ask a manager.",
+      "wrongCredentials": "Wrong email or password.",
+      "failed": "Couldn't sign in. Please try again."
+    }
+  },
+  "Dashboard": {
+    "hello": "Hello, {name}",
+    "tiles": {
+      "netSales": "Today's net sales",
+      "netSalesNote": "Ex tax, after refunds",
+      "orders": "Orders today",
+      "avgTicket": "Average ticket",
+      "openShifts": "Open shifts"
+    },
+    "topProducts": {
+      "title": "Top products today",
+      "description": "By net sales.",
+      "empty": "No sales yet today.",
+      "link": "Sales by product"
+    },
+    "openShifts": {
+      "title": "Open shifts",
+      "description": "Registers taking money right now.",
+      "since": "since {time}",
+      "empty": "No shift is open."
+    },
+    "lowStock": {
+      "title": "Low stock",
+      "description": "Items at or below their reorder level at this branch.",
+      "empty": "Everything is above its reorder level.",
+      "link": "Suggested reorder"
+    },
+    "welcome": {
+      "title": "Welcome",
+      "description": "Use the menu to get to your work.",
+      "tip": "Tip: set your manager PIN under <b>My account</b> so you can approve voids, refunds and big discounts."
+    },
+    "trend": {
+      "days": "{days} days",
+      "title": "Net sales after refunds, last {days} days"
+    },
+    "chart": {
+      "summary": "Total {total}; highest {high}; lowest {low}. Use “Show as table” for every day.",
+      "bar": "{date}: {amount}, {orders} orders",
+      "tooltip": "{date} · {orders} orders",
+      "showTable": "Show as table",
+      "hideTable": "Hide table",
+      "date": "Date",
+      "orders": "Orders",
+      "netSales": "Net sales"
+    }
   }
 }

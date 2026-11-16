@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { switchBranch } from "@/app/[locale]/(app)/actions";
@@ -13,6 +14,7 @@ export function BranchSwitcher({
   branches: { id: string; code: string; name: string }[];
 }) {
   const [pending, startTransition] = useTransition();
+  const t = useTranslations("Nav");
   if (branches.length <= 1) {
     const b = branches[0];
     return <div className="rounded-md border px-3 py-2 text-sm">{b ? `${b.code} · ${b.name}` : "—"}</div>;
@@ -28,7 +30,7 @@ export function BranchSwitcher({
         })
       }
     >
-      <SelectTrigger className="w-full" aria-label="Branch">
+      <SelectTrigger className="w-full" aria-label={t("branch")}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

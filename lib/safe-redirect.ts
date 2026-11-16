@@ -1,3 +1,5 @@
+import { routing } from "@/i18n/routing";
+
 /**
  * Where to go after login. Only same-origin paths are allowed: anything that
  * resolves to another origin (//x, /\x, tabs, schemes) falls back to the
@@ -13,4 +15,14 @@ export function safeRedirectPath(value: string | null | undefined, origin: strin
   } catch {
     return fallback;
   }
+}
+
+const LOCALE_PREFIX = new RegExp(`^/(${routing.locales.join("|")})(?=[/?#]|$)`);
+
+/**
+ * Drops a leading /{locale} from a safe path: the proxy puts the locale into
+ * `next`, and the next-intl router adds it again. Always returns one leading "/".
+ */
+export function stripLocale(path: string): string {
+  return "/" + path.replace(LOCALE_PREFIX, "").replace(/^\/+/, "");
 }

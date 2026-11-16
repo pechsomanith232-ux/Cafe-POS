@@ -3,9 +3,11 @@
 import { Ban, Banknote, ChefHat, Coffee, History, LayoutDashboard, LogOut, Minus, Pause, Percent, Plus, ReceiptText, Search, Send, ShoppingBasket, Trash2, Wallet } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { openOrderAction, openOrdersAction, payAction, resumeOrderAction, saveOrderAction } from "@/app/[locale]/pos/actions";
+import { LanguageSubMenu } from "@/components/shared/language-switcher";
 import { ManagerPinDialog, type PinApproval } from "@/components/shared/manager-pin-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -110,6 +112,7 @@ function OrdersDialog({ currentId, onClose, onPick }: { currentId: string | null
 
 export function PosScreen(p: Props) {
   const router = useRouter();
+  const th = useTranslations("Pos.header");
   const cart = useCart();
   const [hydrated, setHydrated] = useState(false);
   const [category, setCategory] = useState<string>("all");
@@ -219,18 +222,19 @@ export function PosScreen(p: Props) {
           {p.khr && <span className="text-xs text-muted-foreground">1 USD = {num(p.khr.rate, 0)}៛</span>}
           {(
             <Button variant="outline" size="sm" onClick={() => setShowHeld(true)}>
-              <ReceiptText /> Orders {p.heldCount > 0 && <Badge className="ml-1" data-testid="held-count">{p.heldCount}</Badge>}
+              <ReceiptText /> {th("orders")} {p.heldCount > 0 && <Badge className="ml-1" data-testid="held-count">{p.heldCount}</Badge>}
             </Button>
           )}
           <DropdownMenu>
-            <DropdownMenuTrigger asChild><Button variant="ghost" size="sm" aria-label="POS menu">Menu</Button></DropdownMenuTrigger>
+            <DropdownMenuTrigger asChild><Button variant="ghost" size="sm" aria-label={th("menuLabel")}>{th("menu")}</Button></DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onSelect={() => setRecent(true)}><History /> Recent orders &amp; refunds</DropdownMenuItem>
-              {p.canCashMovement && <DropdownMenuItem onSelect={() => setCashMove(true)}><Banknote /> Cash in / out</DropdownMenuItem>}
-              {p.canQuickPurchase && <DropdownMenuItem asChild><Link href={`/purchasing/receipts/new?type=direct&register=${p.registerId}`}><ShoppingBasket /> Quick purchase</Link></DropdownMenuItem>}
-              {p.kitchenEnabled && <DropdownMenuItem asChild><Link href="/kitchen"><ChefHat /> Kitchen screen</Link></DropdownMenuItem>}
-              <DropdownMenuItem asChild><Link href="/dashboard"><LayoutDashboard /> Back office</Link></DropdownMenuItem>
-              {p.canCloseShift && (<><DropdownMenuSeparator /><DropdownMenuItem onSelect={() => setClosing(true)}><LogOut /> Close shift</DropdownMenuItem></>)}
+              <DropdownMenuItem onSelect={() => setRecent(true)}><History /> {th("recent")}</DropdownMenuItem>
+              {p.canCashMovement && <DropdownMenuItem onSelect={() => setCashMove(true)}><Banknote /> {th("cashMove")}</DropdownMenuItem>}
+              {p.canQuickPurchase && <DropdownMenuItem asChild><Link href={`/purchasing/receipts/new?type=direct&register=${p.registerId}`}><ShoppingBasket /> {th("quickPurchase")}</Link></DropdownMenuItem>}
+              {p.kitchenEnabled && <DropdownMenuItem asChild><Link href="/kitchen"><ChefHat /> {th("kitchen")}</Link></DropdownMenuItem>}
+              <DropdownMenuItem asChild><Link href="/dashboard"><LayoutDashboard /> {th("backOffice")}</Link></DropdownMenuItem>
+              <LanguageSubMenu />
+              {p.canCloseShift && (<><DropdownMenuSeparator /><DropdownMenuItem onSelect={() => setClosing(true)}><LogOut /> {th("closeShift")}</DropdownMenuItem></>)}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

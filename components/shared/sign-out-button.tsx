@@ -1,12 +1,14 @@
 "use client";
 
 import { LogOut } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 
 export function SignOutButton({ variant = "outline" }: { variant?: "outline" | "ghost" }) {
   const router = useRouter();
+  const t = useTranslations("Nav");
   return (
     <Button
       variant={variant}
@@ -18,7 +20,7 @@ export function SignOutButton({ variant = "outline" }: { variant?: "outline" | "
         router.refresh();
       }}
     >
-      <LogOut /> Sign out
+      <LogOut /> {t("signOut")}
     </Button>
   );
 }

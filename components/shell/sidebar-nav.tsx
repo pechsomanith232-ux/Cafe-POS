@@ -29,7 +29,9 @@ import {
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { usePathname } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { SignOutButton } from "@/components/shared/sign-out-button";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -75,6 +77,7 @@ const ICONS: Record<NavIcon, LucideIcon> = {
 
 function NavContent({ data, onNavigate }: { data: SidebarData; onNavigate?: () => void }) {
   const pathname = usePathname();
+  const t = useTranslations("Nav");
   return (
     <div className="flex h-full flex-col gap-4 p-3">
       <div className="flex items-center gap-2 px-2 pt-1 font-semibold">
@@ -83,8 +86,8 @@ function NavContent({ data, onNavigate }: { data: SidebarData; onNavigate?: () =
       <BranchSwitcher branchId={data.branchId} branches={data.branches} />
       <nav className="flex-1 space-y-4 overflow-y-auto">
         {data.groups.map((group) => (
-          <div key={group.label}>
-            <div className="px-2 pb-1 text-xs font-medium text-muted-foreground">{group.label}</div>
+          <div key={group.key}>
+            <div className="px-2 pb-1 text-xs font-medium text-muted-foreground">{t(`groups.${group.key}`)}</div>
             {group.items.map((item) => {
               const Icon = ICONS[item.icon];
               const path = item.href.split("?")[0];
@@ -99,7 +102,7 @@ function NavContent({ data, onNavigate }: { data: SidebarData; onNavigate?: () =
                     active && "bg-sidebar-accent font-medium",
                   )}
                 >
-                  <Icon className="size-4" /> {item.label}
+                  <Icon className="size-4" /> {t(`items.${item.key}`)}
                   {item.badge === "lowStock" && <LowStockBadge branchId={data.branchId} />}
                 </Link>
               );
@@ -110,7 +113,10 @@ function NavContent({ data, onNavigate }: { data: SidebarData; onNavigate?: () =
       <div className="border-t pt-3">
         <div className="px-2 text-sm font-medium">{data.userName}</div>
         <div className="px-2 pb-2 text-xs text-muted-foreground">{data.roleName}</div>
-        <SignOutButton variant="ghost" />
+        <div className="flex flex-wrap items-center gap-1">
+          <SignOutButton variant="ghost" />
+          <LanguageSwitcher />
+        </div>
       </div>
     </div>
   );
@@ -118,17 +124,18 @@ function NavContent({ data, onNavigate }: { data: SidebarData; onNavigate?: () =
 
 export function SidebarNav({ data, variant }: { data: SidebarData; variant: "desktop" | "mobile" }) {
   const [open, setOpen] = useState(false);
+  const t = useTranslations("Nav");
   if (variant === "desktop") return <NavContent data={data} />;
   return (
     <div className="flex items-center gap-2 border-b p-2 md:hidden">
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" aria-label="Open menu">
+          <Button variant="ghost" size="icon" aria-label={t("openMenu")}>
             <Menu />
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="w-64 p-0">
-          <SheetTitle className="sr-only">Menu</SheetTitle>
+          <SheetTitle className="sr-only">{t("menu")}</SheetTitle>
           <NavContent data={data} onNavigate={() => setOpen(false)} />
         </SheetContent>
       </Sheet>
