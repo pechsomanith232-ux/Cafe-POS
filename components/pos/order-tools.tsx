@@ -4,7 +4,7 @@ import { Minus, Plus, Printer } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { cashMovementAction, closeShiftAction, recentOrdersAction, refundableAction, refundOrderAction, shiftReportAction, voidOrderAction } from "@/app/pos/actions";
+import { cashMovementAction, closeShiftAction, recentOrdersAction, refundableAction, refundOrderAction, shiftReportAction, voidOrderAction } from "@/app/[locale]/pos/actions";
 import { Field } from "@/components/shared/field";
 import { ManagerPinDialog, type PinApproval } from "@/components/shared/manager-pin-dialog";
 import { Badge } from "@/components/ui/badge";

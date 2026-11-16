@@ -5,7 +5,7 @@ import { ArrowLeft, Volume2, VolumeX } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { setKitchenStatusAction } from "@/app/kitchen/actions";
+import { setKitchenStatusAction } from "@/app/[locale]/kitchen/actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { elapsedTone } from "@/lib/pos/kitchen";

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import type { z } from "zod";
-import { createItemAction, updateItemAction } from "@/app/(app)/inventory/actions";
+import { createItemAction, updateItemAction } from "@/app/[locale]/(app)/inventory/actions";
 import { Field } from "@/components/shared/field";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

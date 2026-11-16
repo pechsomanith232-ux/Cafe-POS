@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { cancelTransferAction, receiveTransferAction, sendTransferAction } from "@/app/(app)/inventory/transfers/actions";
+import { cancelTransferAction, receiveTransferAction, sendTransferAction } from "@/app/[locale]/(app)/inventory/transfers/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { num } from "@/lib/format";

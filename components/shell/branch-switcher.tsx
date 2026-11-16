@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import { toast } from "sonner";
-import { switchBranch } from "@/app/(app)/actions";
+import { switchBranch } from "@/app/[locale]/(app)/actions";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function BranchSwitcher({

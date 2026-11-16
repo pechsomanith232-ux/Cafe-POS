@@ -4,7 +4,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { createTransferAction } from "@/app/(app)/inventory/transfers/actions";
+import { createTransferAction } from "@/app/[locale]/(app)/inventory/transfers/actions";
 import { Field } from "@/components/shared/field";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";

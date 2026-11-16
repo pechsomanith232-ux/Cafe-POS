@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { openOrderAction, openOrdersAction, payAction, resumeOrderAction, saveOrderAction } from "@/app/pos/actions";
+import { openOrderAction, openOrdersAction, payAction, resumeOrderAction, saveOrderAction } from "@/app/[locale]/pos/actions";
 import { ManagerPinDialog, type PinApproval } from "@/components/shared/manager-pin-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

@@ -3,7 +3,7 @@
 import { Printer, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { customersAction } from "@/app/pos/actions";
+import { customersAction } from "@/app/[locale]/pos/actions";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";

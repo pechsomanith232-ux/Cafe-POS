@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import type { z } from "zod";
-import { createSupplierAction, updateSupplierAction } from "@/app/(app)/purchasing/actions";
+import { createSupplierAction, updateSupplierAction } from "@/app/[locale]/(app)/purchasing/actions";
 import { Field } from "@/components/shared/field";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";

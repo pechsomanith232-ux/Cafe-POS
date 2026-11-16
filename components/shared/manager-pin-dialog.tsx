@@ -2,7 +2,7 @@
 
 import { Delete, KeyRound, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { listApproversAction } from "@/app/(app)/settings/actions";
+import { listApproversAction } from "@/app/[locale]/(app)/settings/actions";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";

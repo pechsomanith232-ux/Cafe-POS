@@ -4,7 +4,7 @@ import { ImageIcon, Trash2, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { comboCostAction, removeProductImageAction, setBranchPriceAction, uploadProductImageAction } from "@/app/(app)/menu/actions";
+import { comboCostAction, removeProductImageAction, setBranchPriceAction, uploadProductImageAction } from "@/app/[locale]/(app)/menu/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";

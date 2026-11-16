@@ -4,7 +4,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useId, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { saveModifierGroupAction } from "@/app/(app)/menu/actions";
+import { saveModifierGroupAction } from "@/app/[locale]/(app)/menu/actions";
 import { Field } from "@/components/shared/field";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

@@ -4,7 +4,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useId, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { saveProductAction } from "@/app/(app)/menu/actions";
+import { saveProductAction } from "@/app/[locale]/(app)/menu/actions";
 import { Field } from "@/components/shared/field";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
