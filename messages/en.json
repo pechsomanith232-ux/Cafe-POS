@@ -1,0 +1,11 @@
+{
+  "Metadata": {
+    "title": "Café POS",
+    "description": "Point of sale and inventory for cafés"
+  },
+  "LanguageSwitcher": {
+    "label": "Language",
+    "en": "English",
+    "km": "ខ្មែរ"
+  }
+}
