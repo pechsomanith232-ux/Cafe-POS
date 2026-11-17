@@ -75,6 +75,7 @@ Optional image storage for local development (Phase 4):
 - [docs/deploy-coolify.md](docs/deploy-coolify.md) — VPS + Coolify, step by step
 - [docs/restore.md](docs/restore.md) — testing and restoring backups
 - [docs/operations.md](docs/operations.md) — deploy, roll back, add a branch, reset a password
+- [docs/business-logic.md](docs/business-logic.md) — the business rules with worked examples, and how to do each job
 - [docs/user-guide.md](docs/user-guide.md) — short guide for staff
 
 ## Project layout
