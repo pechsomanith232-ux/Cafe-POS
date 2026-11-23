@@ -5,6 +5,8 @@ import {
   itemUnits,
   items,
   products,
+  productVariants,
+  recipeLines,
   stockAdjustmentLines,
   stockAdjustments,
   stockCountLines,
@@ -191,6 +193,7 @@ export async function updateItem(ctx: AppContext, itemId: string, input: ItemInp
       if (u.id && existing.some((e) => e.id === u.id)) await tx.update(itemUnits).set(values).where(eq(itemUnits.id, u.id));
       else await tx.insert(itemUnits).values({ ...values, itemId });
     }
+    if (sold) await syncSoldUnit(tx, updated, sold.id);
     await writeAudit(tx, ctx, { action: "item.update", entity: "item", entityId: itemId, before, after: await itemSnapshot(tx, updated) });
   });
 }
@@ -432,4 +435,24 @@ export async function cancelCount(ctx: AppContext, countId: string) {
     await tx.update(stockCounts).set({ status: "cancelled" }).where(eq(stockCounts.id, countId));
     await writeAudit(tx, ctx, { action: "stock_count.cancel", entity: "stock_count", entityId: countId, branchId: c.branchId });
   });
+}
+
+/**
+ * The unit an item is sold in on the POS (its managed product's one recipe line) must keep
+ * matching the item: follow a new factor for the same unit, and refuse removing or renaming it.
+ */
+async function syncSoldUnit(tx: Executor, item: Item, productId: string) {
+  const [v] = await tx.select({ id: productVariants.id }).from(productVariants)
+    .where(and(eq(productVariants.productId, productId), eq(productVariants.isActive, true)));
+  const [line] = v ? await tx.select().from(recipeLines).where(eq(recipeLines.variantId, v.id)) : [];
+  if (!line) return;
+  const option = (await itemUnitOptions(tx, item)).find((o) => o.label === line.unitLabel);
+  if (!option) {
+    throw new ValidationError(`"${line.unitLabel}" is the unit this item is sold in on the POS. Change "Sold per" on its Sell on POS card first.`);
+  }
+  if (!dec(option.factor).eq(line.unitFactor)) {
+    await tx.update(recipeLines)
+      .set({ unitFactor: option.factor, qtyBase: toQtyString(dec(line.qtyEntered).times(option.factor)) })
+      .where(eq(recipeLines.id, line.id));
+  }
 }

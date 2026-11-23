@@ -62,3 +62,8 @@ export function breakdown(qtyBase: DecInput, baseLabel: string, packaging: ItemU
 export function formatQty(qtyBase: DecInput, factor: DecInput, label: string): string {
   return `${trim(dec(qtyBase).div(dec(factor)))} ${label}`;
 }
+
+/** Default "sold per" unit for selling an item on the POS: its first packaging unit (a bottle, not 1 ml), else the base unit. */
+export function defaultSaleUnit<T extends { key: string }>(options: T[]): string {
+  return options.find((o) => o.key.startsWith("iu:"))?.key ?? "base";
+}

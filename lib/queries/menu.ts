@@ -247,7 +247,8 @@ export async function getItemSale(ctx: AppContext, itemId: string) {
     enabled: p.isActive,
     price: v?.price ?? "0",
     categoryId: p.categoryId,
-    unitKey: unit?.key ?? "base",
+    // null = the unit it was sold in no longer exists as saved: the owner must choose again.
+    unitKey: line ? unit?.key ?? null : "base",
     imageUrl: p.imageKey ? await getStorage().url(p.imageKey) : null,
   };
 }

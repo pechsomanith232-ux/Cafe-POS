@@ -147,6 +147,8 @@
     "unit": "Sold per",
     "save": "Save selling settings",
     "saved": "Selling settings saved.",
-    "photoHint": "Photo shown on the POS tile"
+    "photoHint": "Photo shown on the POS tile",
+    "chooseUnit": "Choose a unit",
+    "unitChanged": "The unit this item was sold in has changed. Choose \"Sold per\" again before saving."
   }
 }

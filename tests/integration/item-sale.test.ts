@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { and, eq } from "drizzle-orm";
 import { afterAll, describe, expect, it } from "vitest";
-import { items, paymentMethods, products, registers, stockMovements } from "@/db/schema";
+import { itemUnits, items, paymentMethods, products, registers, stockMovements } from "@/db/schema";
 import { ConflictError, NotFoundError, ValidationError } from "@/lib/errors";
 import { ForbiddenError } from "@/lib/permissions";
 import { getItemSale } from "@/lib/queries/menu";
@@ -207,6 +207,55 @@ describe("item changes reach its POS product", () => {
       const [p] = await tx.select().from(products).where(eq(products.id, productId));
       expect(p.isActive).toBe(false);
       expect(await posProduct(f.owner, "Water Bottle")).toBeUndefined();
+    });
+  });
+});
+
+describe("review fixes", () => {
+  async function bottled(f: Awaited<ReturnType<typeof setup>>) {
+    const juice = await createItem(f.tx, f.org.id, { name: "Juice", base: "ml", packaging: [{ name: "bottle", factor: "500" }] });
+    const bottle = (await f.tx.query.itemUnits.findFirst({ where: (u, { eq }) => eq(u.itemId, juice.id) }))!;
+    await setItemSale(f.owner, juice.id, on("1.00", `iu:${bottle.id}`));
+    const edit = (units: { id?: string; name: string; factor: string }[]) =>
+      updateItem(f.owner, juice.id, { name: "Juice", baseUnitCode: "ml", itemType: "resale", units: units.map((u) => ({ ...u, isPurchaseDefault: false, isCountDefault: false })) });
+    return { juice, bottle, edit };
+  }
+
+  it("a blank price is refused, not sold for free", async () => {
+    await withRollback(async (tx) => {
+      const f = await setup(tx);
+      await expect(setItemSale(f.owner, f.water.id, on(""))).rejects.toThrow(ValidationError);
+    });
+  });
+
+  it("changing the sold-per unit's factor updates what a sale deducts", async () => {
+    await withRollback(async (tx) => {
+      const f = await setup(tx);
+      const { juice, bottle, edit } = await bottled(f);
+      await edit([{ id: bottle.id, name: "bottle", factor: "600" }]);
+      const [p] = await tx.select().from(products).where(eq(products.sourceItemId, juice.id));
+      const v = (await tx.query.productVariants.findFirst({ where: (x, { eq }) => eq(x.productId, p.id) }))!;
+      const line = (await tx.query.recipeLines.findFirst({ where: (x, { eq }) => eq(x.variantId, v.id) }))!;
+      expect(line.qtyBase).toBe("600.0000");
+      expect((await getItemSale(f.owner, juice.id))!.unitKey).toBe(`iu:${bottle.id}`);
+    });
+  });
+
+  it("removing the sold-per unit is refused", async () => {
+    await withRollback(async (tx) => {
+      const f = await setup(tx);
+      const { edit } = await bottled(f);
+      await expect(edit([])).rejects.toThrow(/sold in on the POS/);
+    });
+  });
+
+  it("an unmatched unit is reported as unknown, never as base", async () => {
+    await withRollback(async (tx) => {
+      const f = await setup(tx);
+      const { juice, bottle } = await bottled(f);
+      // Simulate drift from before this guard existed: the unit row changed under the recipe.
+      await tx.update(itemUnits).set({ factorToBase: "750" }).where(eq(itemUnits.id, bottle.id));
+      expect((await getItemSale(f.owner, juice.id))!.unitKey).toBeNull();
     });
   });
 });

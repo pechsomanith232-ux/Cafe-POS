@@ -12,8 +12,9 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useRouter } from "@/i18n/navigation";
+import { defaultSaleUnit } from "@/lib/domain/units";
 
-export type ItemSaleSettings = { productId: string; enabled: boolean; price: string; categoryId: string | null; unitKey: string; imageUrl: string | null };
+export type ItemSaleSettings = { productId: string; enabled: boolean; price: string; categoryId: string | null; unitKey: string | null; imageUrl: string | null };
 
 const NO_CATEGORY = "none";
 
@@ -29,11 +30,12 @@ export function ItemSaleCard({ itemId, sale, categories, unitOptions }: {
   const [enabled, setEnabled] = useState(sale?.enabled ?? false);
   const [price, setPrice] = useState(sale ? String(Number(sale.price)) : "");
   const [categoryId, setCategoryId] = useState(sale?.categoryId ?? NO_CATEGORY);
-  const [unitKey, setUnitKey] = useState(sale?.unitKey ?? "base");
+  // A saved unit that no longer matches the item comes back as null: the owner must choose again.
+  const [unitKey, setUnitKey] = useState(sale ? sale.unitKey ?? "" : defaultSaleUnit(unitOptions));
   const [pending, start] = useTransition();
 
   const save = () => start(async () => {
-    const r = await setItemSaleAction(itemId, { enabled, price: price.trim() || "0", categoryId: categoryId === NO_CATEGORY ? null : categoryId, unitKey });
+    const r = await setItemSaleAction(itemId, { enabled, price: price.trim(), categoryId: categoryId === NO_CATEGORY ? null : categoryId, unitKey });
     if (!r.ok) return void toast.error(r.error);
     toast.success(t("saved"));
     router.refresh();
@@ -65,15 +67,16 @@ export function ItemSaleCard({ itemId, sale, categories, unitOptions }: {
           </Field>
           <Field label={t("unit")}>
             <Select value={unitKey} onValueChange={setUnitKey}>
-              <SelectTrigger className="w-full" aria-label={t("unit")}><SelectValue /></SelectTrigger>
+              <SelectTrigger className="w-full" aria-label={t("unit")}><SelectValue placeholder={t("chooseUnit")} /></SelectTrigger>
               <SelectContent>
                 {unitOptions.map((u) => <SelectItem key={u.key} value={u.key}>{u.label}</SelectItem>)}
               </SelectContent>
             </Select>
           </Field>
         </div>
+        {sale && !sale.unitKey && !unitKey && <p className="text-sm text-destructive">{t("unitChanged")}</p>}
         <div>
-          <Button onClick={save} disabled={pending}>{t("save")}</Button>
+          <Button onClick={save} disabled={pending || !unitKey}>{t("save")}</Button>
         </div>
         {sale && (
           <div className="grid gap-2">
