@@ -16,6 +16,8 @@ import { dec, sum, toMoneyString } from "@/lib/domain/money";
 import { marginPct, theoreticalCost } from "@/lib/domain/recipe";
 import { NotFoundError, ValidationError } from "@/lib/errors";
 import { ForbiddenError, hasPermission, type AppContext } from "@/lib/permissions";
+import { itemUnitOptions } from "@/lib/services/inventory";
+import { getStorage } from "@/lib/storage";
 import { itemOptionsByIds, itemOptionsFor } from "./inventory";
 
 /** Can see the menu: menu.view or menu.manage at the active branch. */
@@ -227,3 +229,24 @@ export type RecipeItem = Awaited<ReturnType<typeof listRecipeItems>>[number];
 
 /** Recipe item ids of a product's variants or a group's options (for listRecipeItems). */
 export const recipeItemIds = (rows: { recipe: { itemId: string }[] }[]) => rows.flatMap((r) => r.recipe.map((l) => l.itemId));
+
+/** "Sell on POS" settings of an inventory item, or null when it has never been made sellable. */
+export async function getItemSale(ctx: AppContext, itemId: string) {
+  requireMenuView(ctx);
+  const [p] = await ctx.db.select().from(products).where(and(eq(products.sourceItemId, itemId), eq(products.orgId, ctx.orgId)));
+  if (!p) return null;
+  const [v] = await ctx.db.select().from(productVariants).where(and(eq(productVariants.productId, p.id), eq(productVariants.isActive, true)));
+  const [line] = v ? await ctx.db.select().from(recipeLines).where(eq(recipeLines.variantId, v.id)) : [];
+  const [item] = await ctx.db.select().from(items).where(eq(items.id, itemId));
+  const options = await itemUnitOptions(ctx.db, item);
+  // Same factor can belong to two units (L and a 1000 ml bottle): the label decides.
+  const unit = line ? options.find((o) => o.label === line.unitLabel && dec(o.factor).eq(line.unitFactor)) ?? options.find((o) => dec(o.factor).eq(line.unitFactor)) : undefined;
+  return {
+    productId: p.id,
+    enabled: p.isActive,
+    price: v?.price ?? "0",
+    categoryId: p.categoryId,
+    unitKey: unit?.key ?? "base",
+    imageUrl: p.imageKey ? await getStorage().url(p.imageKey) : null,
+  };
+}

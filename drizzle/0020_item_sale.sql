@@ -1,0 +1,3 @@
+ALTER TABLE "products" ADD COLUMN "source_item_id" uuid;--> statement-breakpoint
+ALTER TABLE "products" ADD CONSTRAINT "products_source_item_id_items_id_fk" FOREIGN KEY ("source_item_id") REFERENCES "public"."items"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+CREATE UNIQUE INDEX "products_source_item_uq" ON "products" USING btree ("source_item_id") WHERE "products"."source_item_id" is not null;

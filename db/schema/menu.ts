@@ -43,10 +43,13 @@ export const products = pgTable(
     deductStock: boolean("deduct_stock").notNull().default(true),
     sortOrder: integer("sort_order").notNull().default(0),
     isActive: boolean("is_active").notNull().default(true),
+    /** Set when an inventory item is sold on the POS: this product is managed from that item. */
+    sourceItemId: uuid("source_item_id").references(() => items.id),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
   (t) => [
+    uniqueIndex("products_source_item_uq").on(t.sourceItemId).where(sql`${t.sourceItemId} is not null`),
     uniqueIndex("products_org_name_uq").on(t.orgId, sql`lower(${t.name})`),
     index("products_category_idx").on(t.categoryId),
     check("products_station_ck", sql`${t.kitchenStation} in ('bar', 'kitchen', 'none')`),

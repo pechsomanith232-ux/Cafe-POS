@@ -141,6 +141,13 @@
       "when": 1794298318131,
       "tag": "0019_hot_path_indexes",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1795417974701,
+      "tag": "0020_item_sale",
+      "breakpoints": true
     }
   ]
 }

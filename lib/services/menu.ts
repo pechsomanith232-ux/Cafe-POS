@@ -122,6 +122,30 @@ export async function saveProduct(ctx: AppContext, id: string | null, input: Pro
   requireMenuManage(ctx);
   const data = parseInput(productInput, input);
   return inTransaction(ctx, async (tx, ctx) => {
+    if (id) {
+      const [p] = await tx.select({ sourceItemId: products.sourceItemId }).from(products)
+        .where(and(eq(products.id, id), eq(products.orgId, ctx.orgId))).for("update");
+      // Item-managed products keep their price and recipe on the item (one place to edit).
+      if (p?.sourceItemId) throw new ValidationError("Edit this from its inventory item.");
+    }
+    return upsertProduct(tx, ctx, id, data);
+  });
+}
+
+export type ParsedProductInput = ReturnType<typeof productInput.parse>;
+
+/**
+ * Create or update a product with its variants, recipes and modifier groups, inside the
+ * caller's transaction. Shared by saveProduct and item-managed products (setItemSale).
+ */
+export async function upsertProduct(
+  tx: Executor,
+  ctx: AppContext,
+  id: string | null,
+  data: ParsedProductInput,
+  extra: { sourceItemId?: string } = {},
+): Promise<Product> {
+  {
     const [dupe] = await tx.select({ id: products.id }).from(products)
       .where(and(eq(products.orgId, ctx.orgId), sql`lower(${products.name}) = lower(${data.name})`, id ? ne(products.id, id) : undefined));
     if (dupe) throw new ConflictError(`A product named "${data.name}" already exists.`);
@@ -146,7 +170,7 @@ export async function saveProduct(ctx: AppContext, id: string | null, input: Pro
       if (!before) throw new NotFoundError("Product not found.");
       [product] = await tx.update(products).set(header).where(eq(products.id, id)).returning();
     } else {
-      [product] = await tx.insert(products).values({ ...header, orgId: ctx.orgId }).returning();
+      [product] = await tx.insert(products).values({ ...header, orgId: ctx.orgId, sourceItemId: extra.sourceItemId ?? null }).returning();
     }
 
     // Variants: update by id, insert new, archive the rest.
@@ -190,7 +214,7 @@ export async function saveProduct(ctx: AppContext, id: string | null, input: Pro
       after: { ...header, modifierGroupIds: data.modifierGroupIds, variants: variantSnap, archivedVariants: archived.map((a) => a.name) },
     });
     return product;
-  });
+  }
 }
 
 /** Set or clear the product image key (the file itself is handled by lib/storage). Returns the old key. */
