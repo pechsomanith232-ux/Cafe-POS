@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { TogglePills } from "@/components/ui/toggle-pills";
 import { cashDisplay, settlePayment, type SettleCurrency } from "@/lib/domain/currency";
 import { dec } from "@/lib/domain/money";
 import { num, usd } from "@/lib/format";
@@ -99,9 +100,9 @@ export function PayDialog({
 
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-h-[95vh] overflow-y-auto sm:max-w-2xl">
+      <DialogContent className="max-h-[95vh] overflow-y-auto sm:max-w-3xl">
         <DialogHeader>
-          <DialogTitle className="flex items-baseline justify-between gap-4 pr-6">
+          <DialogTitle className="flex items-baseline justify-between gap-4 pe-6">
             <span>Pay</span>
             <span className="tabular-nums">{usd(total)} <span className="text-base font-normal text-muted-foreground">· {fmt("KHR", inCur(total, "KHR"))}</span></span>
           </DialogTitle>
@@ -109,32 +110,27 @@ export function PayDialog({
         </DialogHeader>
         <div className="grid gap-4 md:grid-cols-[1fr_15rem]">
           <div className="grid content-start gap-3">
-            <div className="flex flex-wrap gap-2">
-              {usable.map((m) => (
-                <Button key={m.id} type="button" variant={m.id === methodId ? "default" : "outline"} className="h-11" onClick={() => { setMethodId(m.id); if (m.type === "account") setCurrency("USD"); }}>{m.name}</Button>
-              ))}
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              {currencies.map((c) => (
-                <Button key={c.code} type="button" variant={currency === c.code ? "secondary" : "outline"} disabled={isAccount && c.code !== "USD"} onClick={() => setCurrency(c.code)}>
-                  {c.code === "KHR" ? "Riel ៛" : "USD $"}
-                </Button>
-              ))}
-            </div>
+            <TogglePills className="grid grid-cols-3" itemClassName="h-12 min-w-0 px-2 leading-tight whitespace-normal" value={methodId}
+              aria-label="Payment method"
+              onValueChange={(id) => { setMethodId(id); if (method(id)?.type === "account") setCurrency("USD"); }}
+              options={usable.map((m) => ({ value: m.id, label: m.name }))} />
+            <TogglePills className="grid grid-cols-2" itemClassName="h-12" value={currency} onValueChange={setCurrency}
+              aria-label="Currency"
+              options={currencies.map((c) => ({ value: c.code, label: c.code === "KHR" ? "Riel ៛" : "USD $", disabled: isAccount && c.code !== "USD" }))} />
             {method(methodId)?.type === "cash" && (
               <div className="grid grid-cols-4 gap-2">
-                {QUICK[currency]?.map((q) => <Button key={q} type="button" variant="outline" className="h-12" onClick={() => add(q)}>{fmt(currency, q)}</Button>)}
+                {QUICK[currency]?.map((q) => <Button key={q} type="button" variant="outline" className="h-12 px-1 tabular-nums" onClick={() => add(q)}>{fmt(currency, q)}</Button>)}
               </div>
             )}
-            <div className="flex gap-2">
+            <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-2">
               <Input className="h-12 text-lg" inputMode="decimal" aria-label="Payment amount" placeholder={`Amount (${currency})`} value={amount}
                 onChange={(e) => setAmount(e.target.value)} onKeyDown={(e) => e.key === "Enter" && add(amount.trim())} />
-              <Button type="button" variant="outline" className="h-12" onClick={() => add(exact())} disabled={dec(remaining).lte(0)}>Exact</Button>
-              <Button type="button" className="h-12" onClick={() => add(amount.trim())}>Add</Button>
+              <Button type="button" variant="outline" className="h-12 px-5" onClick={() => add(exact())} disabled={dec(remaining).lte(0)}>Exact</Button>
+              <Button type="button" variant="secondary" className="h-12 px-5" onClick={() => add(amount.trim())}>Add</Button>
             </div>
             {(anyAccount || isAccount) && (
               <Select value={customerId ?? ""} onValueChange={setCustomerId}>
-                <SelectTrigger className="h-11 w-full" aria-label="Customer to charge"><SelectValue placeholder={customers === null ? "Loading customers…" : "Customer to charge"} /></SelectTrigger>
+                <SelectTrigger className="w-full data-[size=default]:h-12" aria-label="Customer to charge"><SelectValue placeholder={customers === null ? "Loading customers…" : "Customer to charge"} /></SelectTrigger>
                 <SelectContent>
                   {customers?.map((c) => <SelectItem key={c.id} value={c.id}>{c.name} · owes {usd(c.balance)} of {usd(c.creditLimit)}</SelectItem>)}
                 </SelectContent>
@@ -142,34 +138,36 @@ export function PayDialog({
             )}
           </div>
 
-          <div className="grid content-start gap-2 rounded-lg border p-3 text-sm">
+          <div className="grid content-start gap-2 rounded-lg border bg-muted/30 p-3 text-sm">
             {tenders.length === 0 && <p className="text-muted-foreground">No payments yet.</p>}
             {tenders.map((t) => (
               <div key={t.key} className="flex items-center justify-between gap-2" data-testid="tender">
                 <span>{method(t.methodId)?.name}</span>
-                <span className="ml-auto tabular-nums">{fmt(t.currencyCode, t.amount)}</span>
+                <span className="ms-auto tabular-nums">{fmt(t.currencyCode, t.amount)}</span>
                 <Button variant="ghost" size="icon" className="size-7" aria-label="Remove payment" onClick={() => setTenders((x) => x.filter((y) => y.key !== t.key))}><Trash2 /></Button>
               </div>
             ))}
             <div className="mt-2 border-t pt-2">
-              <div className="flex justify-between"><span>Remaining</span><span className={cn("tabular-nums font-medium", dec(remaining).gt(0) && "text-amber-700")} data-testid="remaining">
-                {usd(dec(remaining).gt(0) ? remaining : 0)} · {fmt("KHR", dec(remaining).gt(0) ? inCur(remaining, "KHR") : "0")}
-              </span></div>
+              <div className={cn("-mx-1 grid gap-0.5 rounded-lg px-2 py-2", dec(remaining).gt(0) ? "bg-primary/10 text-primary" : "bg-success/10 text-success")}>
+                <span className="text-xs font-medium">Remaining</span>
+                <span className="text-lg font-semibold tabular-nums" data-testid="remaining">
+                  {usd(dec(remaining).gt(0) ? remaining : 0)} · {fmt("KHR", dec(remaining).gt(0) ? inCur(remaining, "KHR") : "0")}
+                </span>
+              </div>
               {settle.s && dec(settle.s.change.amount).gt(0) && (
                 <div className="mt-1 flex items-center justify-between">
                   <span>Change</span>
                   <span className="text-lg font-semibold tabular-nums" data-testid="change-preview">{fmt(settle.s.change.currency, settle.s.change.amount)}</span>
                 </div>
               )}
-              <div className="mt-2 flex items-center gap-2">
+              <div className="mt-2 grid gap-1.5">
                 <span className="text-xs text-muted-foreground">Change in</span>
-                {currencies.map((c) => (
-                  <Button key={c.code} type="button" size="sm" className="h-7 px-2" variant={changeCurrency === c.code ? "default" : "outline"} aria-pressed={changeCurrency === c.code} onClick={() => setChangeCurrency(c.code)}>{c.code}</Button>
-                ))}
+                <TogglePills className="grid grid-cols-2" itemClassName="h-12" value={changeCurrency} onValueChange={setChangeCurrency}
+                  aria-label="Change in" options={currencies.map((c) => ({ value: c.code, label: c.code }))} />
               </div>
               {settle.error && <p className="mt-2 text-xs text-destructive">{settle.error}</p>}
             </div>
-            <Button className="mt-2 h-12" disabled={pending || !settle.s?.paid || (tenders.length === 0 && dec(total).gt(0))} onClick={complete}>
+            <Button className="mt-2 h-14 text-base font-semibold shadow-sm" disabled={pending || !settle.s?.paid || (tenders.length === 0 && dec(total).gt(0))} onClick={complete}>
               {pending ? "Paying…" : "Complete payment"}
             </Button>
           </div>

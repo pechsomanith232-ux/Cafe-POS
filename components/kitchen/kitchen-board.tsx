@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { setKitchenStatusAction } from "@/app/[locale]/kitchen/actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { TogglePills } from "@/components/ui/toggle-pills";
 import { elapsedTone } from "@/lib/pos/kitchen";
 import type { KitchenTicket } from "@/lib/queries/pos";
 import { cn } from "@/lib/utils";
@@ -80,11 +81,8 @@ export function KitchenBoard({ branchId, branchName }: { branchId: string; branc
       <header className="flex items-center gap-3 border-b bg-background px-4 py-2">
         <Button asChild variant="ghost" size="icon" aria-label="Back to POS"><Link href="/pos"><ArrowLeft /></Link></Button>
         <span className="font-semibold">Kitchen · {branchName}</span>
-        <div className="ml-4 flex gap-1">
-          {(["all", "bar", "kitchen"] as const).map((s) => (
-            <Button key={s} size="sm" variant={station === s ? "default" : "outline"} onClick={() => setStation(s)}>{s === "all" ? "All" : s === "bar" ? "Bar" : "Kitchen"}</Button>
-          ))}
-        </div>
+        <TogglePills className="ms-4 gap-1" size="sm" value={station} onValueChange={setStation}
+          options={[{ value: "all", label: "All" }, { value: "bar", label: "Bar" }, { value: "kitchen", label: "Kitchen" }]} />
         <Button variant="ghost" size="icon" className="ml-auto" aria-label={sound ? "Mute" : "Unmute"} onClick={() => setSound(!sound)}>{sound ? <Volume2 /> : <VolumeX />}</Button>
       </header>
       {error && <p className="p-4 text-sm text-destructive">{(error as Error).message}</p>}

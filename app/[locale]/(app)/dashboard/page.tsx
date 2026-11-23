@@ -1,6 +1,7 @@
+import { Clock, DollarSign, ReceiptText, ShoppingBag } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { KpiCards } from "@/components/reports/kpi-cards";
 import { SalesTrend } from "@/components/reports/sales-trend";
-import { StatTiles } from "@/components/reports/stat-tiles";
 import { PageHeader } from "@/components/shared/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,22 +28,36 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/das
   const branch = ctx.access.get(ctx.branchId)!;
   const low = hasPermission(ctx, ctx.branchId, "inventory.view") ? await lowStock(ctx, ctx.branchId) : null;
   const d = hasPermission(ctx, ctx.branchId, "reports.sales") ? await dashboard(ctx, ctx.branchId) : null;
+  // "vs yesterday" comes from the 7-day series already loaded (its last two points are yesterday and today).
+  const yesterday = d?.series7.at(-2);
+  const vs = (today: number, prev: number | undefined) => {
+    if (!prev) return undefined;
+    const pct = Math.round(((today - prev) / prev) * 100);
+    return pct === 0
+      ? { text: t("tiles.sameAsYesterday"), up: null }
+      : { text: t("tiles.vsYesterday", { delta: `${pct > 0 ? "+" : "−"}${Math.abs(pct)}%` }), up: pct > 0 };
+  };
+  const noSales = d ? d.today.orders === 0 : false;
   return (
     <>
       <PageHeader title={t("hello", { name: ctx.userName })} description={`${branch.branchCode} · ${branch.branchName} — ${branch.roleName}`} />
       {d && (
         <>
-          <StatTiles tiles={[
-            { label: t("tiles.netSales"), value: usd(d.today.netSales), note: t("tiles.netSalesNote") },
-            { label: t("tiles.orders"), value: d.today.orders.toLocaleString("en-US") },
-            { label: t("tiles.avgTicket"), value: usd(d.today.avgTicket) },
-            { label: t("tiles.openShifts"), value: String(d.openShifts.length) },
+          <KpiCards items={[
+            {
+              label: t("tiles.netSales"), value: usd(d.today.netSales), icon: DollarSign, empty: noSales,
+              delta: noSales ? undefined : vs(Number(d.today.netSales), yesterday && Number(yesterday.netSales)),
+              hint: noSales ? t("tiles.noSalesToday") : t("tiles.netSalesNote"),
+            },
+            {
+              label: t("tiles.orders"), value: d.today.orders.toLocaleString("en-US"), icon: ShoppingBag, empty: noSales,
+              delta: noSales ? undefined : vs(d.today.orders, yesterday?.orders),
+              hint: noSales ? t("tiles.noOrdersToday") : t("tiles.noCompare"),
+            },
+            { label: t("tiles.avgTicket"), value: noSales ? "—" : usd(d.today.avgTicket), icon: ReceiptText, empty: noSales, hint: t("tiles.avgTicketNote") },
+            { label: t("tiles.openShifts"), value: String(d.openShifts.length), icon: Clock, hint: t("tiles.openShiftsNote") },
           ]} />
-          <Card className="mb-6">
-            <CardContent className="pt-0">
-              <SalesTrend series7={d.series7} series30={d.series30} />
-            </CardContent>
-          </Card>
+          <SalesTrend series7={d.series7} series30={d.series30} />
         </>
       )}
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -57,7 +72,7 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/das
                 <div key={i} className="flex justify-between"><span>{p.label} <span className="text-muted-foreground">× {p.qty}</span></span><span className="tabular-nums">{usd(p.netSales)}</span></div>
               ))}
               {d.topProducts.length === 0 && <p className="text-muted-foreground">{t("topProducts.empty")}</p>}
-              <Link href="/reports/sales-by-item" className="font-medium underline">{t("topProducts.link")}</Link>
+              <Link href="/reports/sales-by-item" className="mt-1 font-medium text-primary hover:underline">{t("topProducts.link")}</Link>
             </CardContent>
           </Card>
         )}
@@ -93,7 +108,7 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/das
                 </Link>
               ))}
               {low.count === 0 && <p className="text-muted-foreground">{t("lowStock.empty")}</p>}
-              {low.count > 0 && <Link href="/reports/reorder" className="font-medium underline">{t("lowStock.link")}</Link>}
+              {low.count > 0 && <Link href="/reports/reorder" className="mt-1 font-medium text-primary hover:underline">{t("lowStock.link")}</Link>}
             </CardContent>
           </Card>
         )}

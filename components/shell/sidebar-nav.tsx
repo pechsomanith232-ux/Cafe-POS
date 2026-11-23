@@ -81,13 +81,17 @@ function NavContent({ data, onNavigate }: { data: SidebarData; onNavigate?: () =
   return (
     <div className="flex h-full flex-col gap-4 p-3">
       <div className="flex items-center gap-2 px-2 pt-1 font-semibold">
-        <Coffee className="size-5" /> Café POS
+        <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-xs">
+          <Coffee className="size-4" />
+        </span>
+        Café POS
       </div>
       <BranchSwitcher branchId={data.branchId} branches={data.branches} />
-      <nav className="flex-1 space-y-4 overflow-y-auto">
+      <nav className="flex-1 space-y-5 overflow-y-auto">
         {data.groups.map((group) => (
           <div key={group.key}>
-            <div className="px-2 pb-1 text-xs font-medium text-muted-foreground">{t(`groups.${group.key}`)}</div>
+            <div className="px-2 pb-1.5 text-xs font-medium tracking-wide text-muted-foreground uppercase">{t(`groups.${group.key}`)}</div>
+            <div className="grid gap-0.5">
             {group.items.map((item) => {
               const Icon = ICONS[item.icon];
               const path = item.href.split("?")[0];
@@ -98,15 +102,17 @@ function NavContent({ data, onNavigate }: { data: SidebarData; onNavigate?: () =
                   href={item.href}
                   onClick={onNavigate}
                   className={cn(
-                    "flex items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-sidebar-accent",
-                    active && "bg-sidebar-accent font-medium",
+                    "flex items-center gap-2 rounded-lg px-2 py-2 text-sm text-sidebar-foreground transition-colors hover:bg-sidebar-accent",
+                    active && "bg-primary/10 font-medium text-primary hover:bg-primary/15",
                   )}
+                  aria-current={active ? "page" : undefined}
                 >
-                  <Icon className="size-4" /> {t(`items.${item.key}`)}
+                  <Icon className={cn("size-4", active ? "text-primary" : "text-muted-foreground")} /> {t(`items.${item.key}`)}
                   {item.badge === "lowStock" && <LowStockBadge branchId={data.branchId} />}
                 </Link>
               );
             })}
+            </div>
           </div>
         ))}
       </nav>
@@ -127,7 +133,7 @@ export function SidebarNav({ data, variant }: { data: SidebarData; variant: "des
   const t = useTranslations("Nav");
   if (variant === "desktop") return <NavContent data={data} />;
   return (
-    <div className="flex items-center gap-2 border-b p-2 md:hidden">
+    <div className="flex items-center gap-2 border-b bg-sidebar p-2 md:hidden">
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
           <Button variant="ghost" size="icon" aria-label={t("openMenu")}>

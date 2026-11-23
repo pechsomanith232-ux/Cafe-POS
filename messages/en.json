@@ -62,6 +62,12 @@
       "kitchen": "Kitchen screen",
       "backOffice": "Back office",
       "closeShift": "Close shift"
+    },
+    "cart": {
+      "categories": "Categories",
+      "emptyTitle": "Tap a product to add it",
+      "emptyHint": "Items you add will appear here, ready to hold, send or pay.",
+      "pay": "Pay {amount}"
     }
   },
   "Login": {
@@ -82,7 +88,14 @@
       "netSalesNote": "Ex tax, after refunds",
       "orders": "Orders today",
       "avgTicket": "Average ticket",
-      "openShifts": "Open shifts"
+      "openShifts": "Open shifts",
+      "vsYesterday": "{delta} vs yesterday",
+      "sameAsYesterday": "Same as yesterday",
+      "noSalesToday": "No sales yet today. They will show up here as orders come in.",
+      "noOrdersToday": "Your first order of the day will appear here.",
+      "noCompare": "No sales yesterday to compare with",
+      "avgTicketNote": "Per order, including tax",
+      "openShiftsNote": "Registers taking money now"
     },
     "topProducts": {
       "title": "Top products today",
@@ -109,7 +122,9 @@
     },
     "trend": {
       "days": "{days} days",
-      "title": "Net sales after refunds, last {days} days"
+      "title": "Net sales after refunds, last {days} days",
+      "cardTitle": "Sales trend",
+      "range": "Date range"
     },
     "chart": {
       "summary": "Total {total}; highest {high}; lowest {low}. Use “Show as table” for every day.",

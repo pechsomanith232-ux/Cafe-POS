@@ -69,7 +69,7 @@ export function ProductDialog({
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {g.modifiers.map((m) => (
-                    <Button key={m.id} type="button" variant={picked.includes(m.id) ? "default" : "outline"} className="h-11" aria-pressed={picked.includes(m.id)} onClick={() => toggle(g, m.id)}>
+                    <Button key={m.id} type="button" variant={picked.includes(m.id) ? "default" : "outline"} className="h-12" aria-pressed={picked.includes(m.id)} onClick={() => toggle(g, m.id)}>
                       {m.name}{Number(m.priceDelta) !== 0 && ` ${Number(m.priceDelta) > 0 ? "+" : ""}${usd(m.priceDelta)}`}
                     </Button>
                   ))}

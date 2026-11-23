@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { TogglePills } from "@/components/ui/toggle-pills";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { addDays } from "@/lib/dates";
 
@@ -72,11 +73,10 @@ export function ReportFilters({
           <Input key={`f${from}`} type="date" className="w-40" aria-label="From" defaultValue={from} max={to} onChange={(e) => e.target.value && go({ from: e.target.value })} />
           <span className="text-sm text-muted-foreground">to</span>
           <Input key={`t${to}`} type="date" className="w-40" aria-label="To" defaultValue={to} min={from} onChange={(e) => e.target.value && go({ to: e.target.value })} />
-          <div className="flex flex-wrap gap-1">
-            {quick.map(([label, f, t]) => (
-              <Button key={label} size="sm" variant={f === from && t === to ? "secondary" : "ghost"} onClick={() => go({ from: f, to: t })}>{label}</Button>
-            ))}
-          </div>
+          <TogglePills className="flex-wrap gap-1" size="sm" unselected="ghost"
+            value={quick.find(([, f, t]) => f === from && t === to)?.[0] ?? ""}
+            onValueChange={(label) => { const q = quick.find(([l]) => l === label); if (q) go({ from: q[1], to: q[2] }); }}
+            options={quick.map(([label]) => ({ value: label, label }))} />
         </>
       )}
       {dates === "asOf" && (

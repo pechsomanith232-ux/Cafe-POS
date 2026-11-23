@@ -1,3 +1,4 @@
+import { ChevronRight, Package, ReceiptText, ShieldCheck, TrendingUp, Truck, Users, type LucideIcon } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { AccessDenied } from "@/components/shared/access-denied";
 import { PageHeader } from "@/components/shared/page-header";
@@ -10,7 +11,19 @@ import { setRequestLocale } from "next-intl/server";
 export const metadata = { title: "Reports · Café POS" };
 
 type Entry = { href: string; title: string; text: string; perm: PermissionKey };
-const GROUPS: { label: string; items: Entry[] }[] = [
+type Group = { label: string; items: Entry[] };
+
+/** Icon + tinted chip per group (theme tokens only): sales = brand, profit = success, inventory = info. */
+const GROUP_STYLE: Record<string, { icon: LucideIcon; chip: string }> = {
+  Sales: { icon: ReceiptText, chip: "bg-primary/10 text-primary" },
+  Profit: { icon: TrendingUp, chip: "bg-success/10 text-success" },
+  Inventory: { icon: Package, chip: "bg-info/10 text-info" },
+  Purchasing: { icon: Truck, chip: "bg-chart-2/15 text-chart-2" },
+  Customers: { icon: Users, chip: "bg-chart-4/10 text-chart-4" },
+  Audit: { icon: ShieldCheck, chip: "bg-muted text-muted-foreground" },
+};
+
+const GROUPS: Group[] = [
   { label: "Sales", items: [
     { href: "/reports/sales", title: "Sales summary", text: "Gross, discounts, refunds, net, tax, orders and average ticket by day and hour.", perm: "reports.sales" },
     { href: "/reports/sales-by-item", title: "Sales by product", text: "By product, category, variant or modifier, with share of sales.", perm: "reports.sales" },
@@ -61,14 +74,22 @@ export default async function ReportsPage({ params }: PageProps<"/[locale]/repor
       <div className="grid gap-6">
         {groups.map((g) => (
           <section key={g.label}>
-            <h2 className="mb-2 text-sm font-medium text-muted-foreground">{g.label}</h2>
+            <h2 className="mb-3 text-sm font-semibold text-foreground">{g.label}</h2>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {g.items.map((i) => (
-                <Link key={i.href} href={i.href} className="rounded-lg border bg-card p-4 transition-colors hover:bg-accent">
-                  <div className="font-medium">{i.title}</div>
-                  <p className="text-sm text-muted-foreground">{i.text}</p>
-                </Link>
-              ))}
+              {g.items.map((i) => {
+                const { icon: Icon, chip } = GROUP_STYLE[g.label];
+                return (
+                  <Link key={i.href} href={i.href}
+                    className="group flex items-start gap-3 rounded-lg border bg-card p-4 text-card-foreground shadow-sm transition hover:border-primary hover:shadow-md">
+                    <span className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${chip}`}><Icon className="size-4.5" /></span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-medium">{i.title}</span>
+                      <span className="block text-sm text-muted-foreground">{i.text}</span>
+                    </span>
+                    <ChevronRight className="mt-0.5 size-4 shrink-0 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary rtl:rotate-180" />
+                  </Link>
+                );
+              })}
             </div>
           </section>
         ))}

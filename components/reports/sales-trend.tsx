@@ -2,23 +2,30 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { TogglePills } from "@/components/ui/toggle-pills";
 import { DailySalesChart } from "./daily-sales-chart";
 
 type Point = { date: string; netSales: string; orders: number };
 
-/** Dashboard trend: daily net sales for the last 7 or 30 days. */
+/** Dashboard trend card: title and 7/30-day switch on one header row, chart below. */
 export function SalesTrend({ series7, series30 }: { series7: Point[]; series30: Point[] }) {
-  const [days, setDays] = useState<7 | 30>(7);
+  const [days, setDays] = useState<"7" | "30">("7");
   const t = useTranslations("Dashboard.trend");
+  const title = t("title", { days });
   return (
-    <div className="grid gap-2">
-      <div className="flex justify-end gap-1">
-        {([7, 30] as const).map((d) => (
-          <Button key={d} size="sm" variant={days === d ? "secondary" : "ghost"} aria-pressed={days === d} onClick={() => setDays(d)}>{t("days", { days: d })}</Button>
-        ))}
-      </div>
-      <DailySalesChart title={t("title", { days })} data={days === 7 ? series7 : series30} />
-    </div>
+    <Card className="mb-6 gap-4">
+      <CardHeader className="items-center">
+        <CardTitle>{t("cardTitle")}</CardTitle>
+        <CardDescription>{title}</CardDescription>
+        <CardAction>
+          <TogglePills size="sm" unselected="ghost" className="gap-1 rounded-lg bg-muted p-1" value={days} onValueChange={setDays}
+            aria-label={t("range")} options={(["7", "30"] as const).map((d) => ({ value: d, label: t("days", { days: d }) }))} />
+        </CardAction>
+      </CardHeader>
+      <CardContent>
+        <DailySalesChart captionHidden title={title} data={days === "7" ? series7 : series30} />
+      </CardContent>
+    </Card>
   );
 }

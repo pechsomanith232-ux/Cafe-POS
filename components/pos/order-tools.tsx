@@ -13,6 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { TogglePills } from "@/components/ui/toggle-pills";
 import { dec } from "@/lib/domain/money";
 import { num, usd } from "@/lib/format";
 import type { RecentOrderRow, RefundableOrder, ShiftReport } from "@/lib/queries/pos";
@@ -167,10 +168,8 @@ export function CashMovementDialog({ branchId, registerId, onClose }: { branchId
       <DialogContent className="sm:max-w-sm">
         <DialogHeader><DialogTitle>Cash in / out</DialogTitle></DialogHeader>
         <div className="grid gap-3">
-          <div className="grid grid-cols-2 gap-2">
-            <Button variant={type === "pay_out" ? "default" : "outline"} onClick={() => setType("pay_out")}>Pay out</Button>
-            <Button variant={type === "pay_in" ? "default" : "outline"} onClick={() => setType("pay_in")}>Pay in</Button>
-          </div>
+          <TogglePills className="grid grid-cols-2" itemClassName="h-12" value={type} onValueChange={setType}
+            options={[{ value: "pay_out", label: "Pay out" }, { value: "pay_in", label: "Pay in" }]} />
           <div className="grid grid-cols-[6rem_1fr] gap-2">
             <Select value={currency} onValueChange={setCurrency}>
               <SelectTrigger aria-label="Cash currency"><SelectValue /></SelectTrigger>

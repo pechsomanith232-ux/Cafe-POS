@@ -17,7 +17,7 @@ export function RegisterPicker({ registers, registerId }: { registers: { id: str
   if (registers.length < 2) return null;
   return (
     <Select value={registerId} onValueChange={(id) => router.push(`/pos?register=${id}`)}>
-      <SelectTrigger className="h-8 w-40" aria-label="Register"><SelectValue /></SelectTrigger>
+      <SelectTrigger className="h-10 w-40" aria-label="Register"><SelectValue /></SelectTrigger>
       <SelectContent>{registers.map((r) => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}</SelectContent>
     </Select>
   );

@@ -29,7 +29,7 @@ test("a full shift at the till", async ({ page }) => {
   });
 
   await test.step("split payment: $5 cash + 20,500 riel (plan §4.4)", async () => {
-    await page.getByRole("button", { name: "Pay", exact: true }).click();
+    await page.getByRole("button", { name: /^Pay \$/ }).click();
     const pay = page.getByRole("dialog");
     await pay.getByRole("button", { name: "$5.00", exact: true }).click();
     await expect(pay.getByTestId("remaining")).toContainText("$5.00");
