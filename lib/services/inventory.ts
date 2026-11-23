@@ -4,6 +4,7 @@ import {
   itemCategories,
   itemUnits,
   items,
+  products,
   stockAdjustmentLines,
   stockAdjustments,
   stockCountLines,
@@ -165,6 +166,20 @@ export async function updateItem(ctx: AppContext, itemId: string, input: ItemInp
       name: data.name, sku: data.sku, categoryId: data.categoryId ?? null, baseUnitId: newBase, itemType: data.itemType,
       isActive: input.isActive ?? item.isActive,
     }).where(eq(items.id, itemId)).returning();
+
+    // A product sold from this item (Sell on POS) follows the item's name and active state.
+    const [sold] = await tx.select().from(products).where(eq(products.sourceItemId, itemId)).for("update");
+    if (sold) {
+      const patch: { name?: string; isActive?: boolean } = {};
+      if (sold.name !== updated.name) {
+        const [dupe] = await tx.select({ id: products.id }).from(products)
+          .where(and(eq(products.orgId, ctx.orgId), sql`lower(${products.name}) = lower(${updated.name})`, ne(products.id, sold.id)));
+        if (dupe) throw new ConflictError(`A product named "${updated.name}" already exists.`);
+        patch.name = updated.name;
+      }
+      if (!updated.isActive && sold.isActive) patch.isActive = false;
+      if (patch.name !== undefined || patch.isActive !== undefined) await tx.update(products).set(patch).where(eq(products.id, sold.id));
+    }
 
     // Units: keep ids that were passed back (renames), drop the rest, add new ones.
     const existing = await tx.select().from(itemUnits).where(eq(itemUnits.itemId, itemId));

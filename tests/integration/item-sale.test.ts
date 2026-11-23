@@ -8,7 +8,7 @@ import { ConflictError, NotFoundError, ValidationError } from "@/lib/errors";
 import { ForbiddenError } from "@/lib/permissions";
 import { getItemSale } from "@/lib/queries/menu";
 import { getPosMenu } from "@/lib/queries/pos";
-import { setOpeningStock } from "@/lib/services/inventory";
+import { setOpeningStock, updateItem } from "@/lib/services/inventory";
 import { setItemSale } from "@/lib/services/item-sale";
 import { saveProduct } from "@/lib/services/menu";
 import { uploadProductImage } from "@/lib/services/menu-images";
@@ -174,3 +174,39 @@ describe("setItemSale", () => {
   });
 });
 
+
+describe("item changes reach its POS product", () => {
+  const edit = (name: string, isActive = true) => ({ name, baseUnitCode: "pcs" as const, itemType: "resale" as const, units: [], isActive });
+
+  it("renaming the item renames its product", async () => {
+    await withRollback(async (tx) => {
+      const f = await setup(tx);
+      const { productId } = await setItemSale(f.owner, f.water.id, on());
+      await updateItem(f.owner, f.water.id, edit("Water 500ml"));
+      const [p] = await tx.select().from(products).where(eq(products.id, productId));
+      expect(p.name).toBe("Water 500ml");
+    });
+  });
+
+  it("rename clash refuses", async () => {
+    await withRollback(async (tx) => {
+      const f = await setup(tx);
+      await saveProduct(f.owner, null, { name: "Cola", kitchenStation: "none", deductStock: true, modifierGroupIds: [], variants: [{ name: "Each", price: "1", deductStock: null, isDefault: true, recipe: [] }] });
+      await setItemSale(f.owner, f.water.id, on());
+      await expect(updateItem(f.owner, f.water.id, edit("cola"))).rejects.toThrow(ConflictError);
+      const [it] = await tx.select().from(items).where(eq(items.id, f.water.id));
+      expect(it.name).toBe("Water Bottle");
+    });
+  });
+
+  it("deactivating the item hides its product", async () => {
+    await withRollback(async (tx) => {
+      const f = await setup(tx);
+      const { productId } = await setItemSale(f.owner, f.water.id, on());
+      await updateItem(f.owner, f.water.id, edit("Water Bottle", false));
+      const [p] = await tx.select().from(products).where(eq(products.id, productId));
+      expect(p.isActive).toBe(false);
+      expect(await posProduct(f.owner, "Water Bottle")).toBeUndefined();
+    });
+  });
+});
