@@ -55,7 +55,8 @@ export function LoginForm() {
         <CardDescription>{t("description")}</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={onSubmit} className="grid gap-4">
+        {/* method="post": if JavaScript hasn't loaded yet, the browser must not put the password in the URL. */}
+        <form method="post" onSubmit={onSubmit} className="grid gap-4">
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>

@@ -9,7 +9,12 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   // Product images are uploaded through a server action (max 2 MB, plan §1).
-  experimental: { serverActions: { bodySizeLimit: "3mb" } },
+  experimental: {
+    serverActions: { bodySizeLimit: "3mb" },
+    // Dev-only "instant navigation" checks: every page reads the login session first,
+    // so validating all pages flags each one. Only segments that export `instant` are checked.
+    instantInsights: { validationLevel: "manual-warning" },
+  },
   turbopack: {
     rules: {
       "*.css": {
