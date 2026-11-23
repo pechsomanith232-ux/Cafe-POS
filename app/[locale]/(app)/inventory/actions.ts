@@ -20,6 +20,8 @@ import {
   updateItem,
 } from "@/lib/services/inventory";
 import type { AdjustmentInput, ItemInput } from "@/lib/validators/inventory";
+import { setItemSale } from "@/lib/services/item-sale";
+import type { ItemSaleInput } from "@/lib/validators/item-sale";
 
 // Thin actions (plan §2.2): context → one service → refresh.
 const refresh = () => revalidatePath("/[locale]/(app)/inventory", "layout");
@@ -119,5 +121,15 @@ export async function cancelCountAction(id: string) {
   return toActionResult(async () => {
     await cancelCount(await getContext(), id);
     refresh();
+  });
+}
+
+/** Sell on POS settings for an item (price, category, unit); refreshes the item page and the till. */
+export async function setItemSaleAction(itemId: string, input: ItemSaleInput) {
+  return toActionResult(async () => {
+    const r = await setItemSale(await getContext(), itemId, input);
+    refresh();
+    revalidatePath("/[locale]/pos", "page");
+    return r;
   });
 }

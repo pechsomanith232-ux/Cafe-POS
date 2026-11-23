@@ -30,7 +30,7 @@ import { createSupplier } from "@/lib/services/purchasing";
 import { openShift } from "@/lib/services/shifts";
 import { setUserPin } from "@/lib/services/users";
 import { customerPaymentAction, saveCustomerAction } from "@/app/[locale]/(app)/customers/actions";
-import { createCountAction, createItemAction, saveAdjustmentAction } from "@/app/[locale]/(app)/inventory/actions";
+import { createCountAction, createItemAction, saveAdjustmentAction, setItemSaleAction } from "@/app/[locale]/(app)/inventory/actions";
 import { createTransferAction } from "@/app/[locale]/(app)/inventory/transfers/actions";
 import { createMenuCategoryAction, saveProductAction } from "@/app/[locale]/(app)/menu/actions";
 import { createSupplierAction, recordSupplierPaymentAction, saveAndPostReceiptAction, saveReceiptAction } from "@/app/[locale]/(app)/purchasing/actions";
@@ -120,6 +120,7 @@ const CASES: Case[] = [
   { name: "draft a stock adjustment", needs: ["inventory.adjust"], run: (f) => saveAdjustmentAction(null, { branchId: f.b1.id, reasonCode: "waste", lines: [{ itemId: f.item.id, unitKey: "base", qty: "-1" }] }) },
   { name: "start a stock count", needs: ["inventory.count"], run: (f) => createCountAction({ branchId: f.b1.id }) },
   { name: "draft a transfer", needs: ["inventory.transfer"], run: (f) => createTransferAction({ fromBranchId: f.b1.id, toBranchId: f.b2.id, lines: [{ itemId: f.item.id, unitKey: "base", qty: "1" }] }, false) },
+  { name: "make an item sellable", needs: ["menu.manage"], run: (f) => setItemSaleAction(f.item.id, { enabled: true, price: "1.00", categoryId: null, unitKey: "base" }) },
   { name: "create a product", needs: ["menu.manage"], run: () => saveProductAction(null, { name: "Tea", variants: [{ name: "Cup", price: "1.50", isDefault: true }] }) },
   { name: "create a menu category", needs: ["menu.manage"], run: () => createMenuCategoryAction({ name: "Drinks" }) },
   { name: "create a supplier", needs: ["purchasing.receive", "purchasing.pay"], anyOf: true, run: () => createSupplierAction({ name: "New supplier" }) },

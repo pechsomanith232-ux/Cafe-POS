@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { Link } from "@/i18n/navigation";
 import { AccessDenied } from "@/components/shared/access-denied";
 import { PageHeader } from "@/components/shared/page-header";
 import { BranchPricesCard, ComboCostCard, ProductImageCard } from "@/components/menu/product-extras";
@@ -38,7 +39,15 @@ export default async function ProductPage({ params }: PageProps<"/[locale]/menu/
           <BranchPricesCard product={product} branchId={ctx.branchId} branchLabel={branch.branchName} canEdit={canEdit} />
         </div>
         {showCost && <ComboCostCard product={product} groups={attached.filter((g) => g.isActive)} />}
-        <ProductForm key={product.updatedAt.toISOString()} product={product} categories={categories} groups={groups} items={items} showCost={showCost} canEdit={canEdit} />
+        {product.sourceItemId ? (
+          // Item-managed (Sell on POS): price, unit and on/off live on the inventory item.
+          <p className="rounded-lg border bg-card p-4 text-sm">
+            This product is sold straight from an inventory item. Change its price, unit and whether it&apos;s on sale from{" "}
+            <Link href={`/inventory/items/${product.sourceItemId}`} className="font-medium text-primary underline underline-offset-4">the item</Link>.
+          </p>
+        ) : (
+          <ProductForm key={product.updatedAt.toISOString()} product={product} categories={categories} groups={groups} items={items} showCost={showCost} canEdit={canEdit} />
+        )}
       </div>
     </>
   );

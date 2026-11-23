@@ -136,5 +136,17 @@
       "orders": "Orders",
       "netSales": "Net sales"
     }
+  },
+  "ItemSale": {
+    "title": "Sell on POS",
+    "description": "Sell this item on the till as it is, like a bottle of water. Each sale takes one unit off stock.",
+    "enabled": "Sell on POS",
+    "price": "Selling price (USD)",
+    "category": "Menu category",
+    "noCategory": "No category",
+    "unit": "Sold per",
+    "save": "Save selling settings",
+    "saved": "Selling settings saved.",
+    "photoHint": "Photo shown on the POS tile"
   }
 }

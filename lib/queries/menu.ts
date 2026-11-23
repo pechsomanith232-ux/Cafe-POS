@@ -104,6 +104,7 @@ export async function listProducts(ctx: AppContext) {
       id: products.id, name: products.name, categoryId: products.categoryId, categoryName: menuCategories.name, imageKey: products.imageKey,
       kitchenStation: products.kitchenStation, isActive: products.isActive,
       noStockDeduction: sql<boolean>`not ${products.deductStock}`,
+      fromItemId: products.sourceItemId,
       variantCount: sql<number>`(select count(*)::int from ${productVariants} where ${activeVariant})`,
       minPrice: sql<string | null>`(select min(${productVariants.price})::text from ${productVariants} where ${activeVariant})`,
       maxPrice: sql<string | null>`(select max(${productVariants.price})::text from ${productVariants} where ${activeVariant})`,

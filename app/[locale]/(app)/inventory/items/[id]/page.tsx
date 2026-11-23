@@ -8,6 +8,8 @@ import { getContext } from "@/lib/context";
 import { NotFoundError } from "@/lib/errors";
 import { hasPermission } from "@/lib/permissions";
 import { getItem, listCategories } from "@/lib/queries/inventory";
+import { getItemSale, listMenuCategories } from "@/lib/queries/menu";
+import { ItemSaleCard } from "@/components/inventory/item-sale-card";
 import { BranchStock } from "./branch-stock";
 import type { Locale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
@@ -24,6 +26,9 @@ export default async function ItemPage({ params }: PageProps<"/[locale]/inventor
   });
   const canManage = hasPermission(ctx, ctx.branchId, "inventory.manage_items");
   const categories = (await listCategories(ctx)).filter((c) => c.isActive || c.id === item.categoryId);
+  // Sell on POS sets a menu price, so it needs menu.manage.
+  const canSell = hasPermission(ctx, ctx.branchId, "menu.manage");
+  const [sale, menuCategories] = canSell ? await Promise.all([getItemSale(ctx, item.id), listMenuCategories(ctx)]) : [null, []];
 
   return (
     <>
@@ -56,6 +61,14 @@ export default async function ItemPage({ params }: PageProps<"/[locale]/inventor
             baseUnitLocked={item.hasMovements}
           />
         ) : null}
+        {canSell && (
+          <ItemSaleCard
+            itemId={item.id}
+            sale={sale}
+            categories={menuCategories.map((c) => ({ id: c.id, name: c.name }))}
+            unitOptions={item.unitOptions.map((u) => ({ key: u.key, label: u.label }))}
+          />
+        )}
       </div>
     </>
   );

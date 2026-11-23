@@ -38,6 +38,7 @@ const columns: ColumnDef<Row, unknown>[] = [
     enableSorting: false,
     cell: ({ row: { original: r } }) => (
       <div className="flex flex-wrap gap-1">
+        {r.fromItemId && <Badge variant="secondary">From inventory item</Badge>}
         {r.noStockDeduction && <Badge variant="secondary">No stock deduction</Badge>}
         {!r.hasRecipe && <Badge variant="outline" className="border-amber-500 text-amber-700">No recipe</Badge>}
         {!r.isActive && <Badge variant="outline">Inactive</Badge>}
